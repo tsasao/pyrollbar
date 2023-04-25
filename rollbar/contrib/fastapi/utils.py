@@ -67,16 +67,11 @@ def get_installed_middlewares(app):
 
 
 def has_bare_routing(app_or_router):
-    expected_app_routes = 4
-    expected_router_routes = 0
+    def is_internal(route):
+        return route.endpoint.__qualname__.startswith("FastAPI.setup.")
 
-    if (
-        isinstance(app_or_router, FastAPI)
-        and expected_app_routes != len(app_or_router.routes)
-    ) or (
-        isinstance(app_or_router, APIRouter)
-        and expected_router_routes != len(app_or_router.routes)
-    ):
-        return False
+    if isinstance(app_or_router, (FastAPI, APIRouter)):
+        if 0 < len([ r for r in app_or_router.routes if not is_internal(r) ]):
+            return False
 
     return True
