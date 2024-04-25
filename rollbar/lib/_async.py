@@ -4,6 +4,7 @@ import inspect
 import logging
 import sys
 from unittest import mock
+from urllib.parse import urljoin
 
 try:
     import httpx
@@ -12,7 +13,7 @@ except ImportError:
 
 import rollbar
 from rollbar import DEFAULT_TIMEOUT
-from rollbar.lib import transport, urljoin
+from rollbar.lib import transport
 
 log = logging.getLogger(__name__)
 
@@ -138,7 +139,7 @@ async def _post_api_httpx(path, payload_str, access_token=None):
     ) as client:
         resp = await client.post(
             url,
-            data=payload_str,
+            content=payload_str,
             headers=headers,
             timeout=rollbar.SETTINGS.get('timeout', DEFAULT_TIMEOUT),
         )
